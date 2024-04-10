@@ -11,7 +11,7 @@ pub const GameManager = struct {
             .main_camera = try cam.Camera.create(
                 alloc,
                 zrl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 },
-                zrl.Vector3{ .x = 1.0, .y = 0.0, .z = 0.0 },
+                zrl.Vector3{ .x = 5.0, .y = 0.0, .z = 5.0 },
                 zrl.Vector3{ .x = 0.0, .y = 1.0, .z = 0.0 },
                 70.0,
                 zrl.CameraProjection.CAMERA_PERSPECTIVE,
