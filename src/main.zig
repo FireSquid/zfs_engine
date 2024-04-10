@@ -1,23 +1,15 @@
 const std = @import("std");
+const gm = @import("game_manager.zig");
 
 const zrl = @import("raylib");
 
 const print = std.debug.print;
 
+const window_title = "3d Visual Test";
+const screen_width = 1920;
+const screen_height = 1080;
+const target_fps = 144;
+
 pub fn main() !void {
-    zrl.SetConfigFlags(zrl.ConfigFlags{ .FLAG_WINDOW_RESIZABLE = true });
-    zrl.InitWindow(800, 800, "hello world!");
-    zrl.SetTargetFPS(60);
-
-    defer zrl.CloseWindow();
-
-    while (!zrl.WindowShouldClose()) {
-        zrl.BeginDrawing();
-        defer zrl.EndDrawing();
-
-        zrl.ClearBackground(zrl.BLACK);
-        zrl.DrawFPS(10, 10);
-
-        zrl.DrawText("hello world!", 100, 100, 20, zrl.YELLOW);
-    }
+    try gm.GameManager.startGameWindowLoop(window_title, screen_width, screen_height, target_fps);
 }
