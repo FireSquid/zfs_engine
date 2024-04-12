@@ -1,12 +1,14 @@
 const std = @import("std");
 
-const zrl = @import("raylib");
+const c = struct {
+    usingnamespace @import("c_headers.zig");
+};
 
 pub const Object = struct {
-    position: zrl.Vector3,
-    scale: zrl.Vector3,
+    position: c.Vector3,
+    scale: c.Vector3,
 
-    pub fn init(pos: zrl.Vector3, scl: zrl.Vector3) @This() {
+    pub fn init(pos: c.Vector3, scl: c.Vector3) @This() {
         return @This(){
             .position = pos,
             .scale = scl,
@@ -14,6 +16,6 @@ pub const Object = struct {
     }
 
     pub fn drawObject(self: @This()) void {
-        zrl.DrawCubeV(self.position, self.scale, zrl.RED);
+        c.DrawCubeV(self.position, self.scale, c.RED);
     }
 };

@@ -1,8 +1,6 @@
 const std = @import("std");
 const gm = @import("game_manager.zig");
 
-const zrl = @import("raylib");
-
 const print = std.debug.print;
 
 const window_title = "3d Visual Test";

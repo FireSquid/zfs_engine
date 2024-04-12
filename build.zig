@@ -22,12 +22,8 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    const raylib = @import("raylib/build.zig");
-
-    raylib.addTo(b, exe, target.query, optimize, .{});
-
     exe.linkLibC();
-    exe.addIncludePath(std.Build.LazyPath.relative("raylib"));
+    exe.linkSystemLibrary("raylib");
 
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default

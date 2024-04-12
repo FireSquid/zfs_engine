@@ -1,7 +1,9 @@
 const std = @import("std");
 const cam = @import("camera.zig");
 
-const zrl = @import("raylib");
+const c = struct {
+    usingnamespace @import("c_headers.zig");
+};
 
 pub const GameManager = struct {
     main_camera: cam.Camera,
@@ -10,11 +12,11 @@ pub const GameManager = struct {
         return @This(){
             .main_camera = try cam.Camera.create(
                 alloc,
-                zrl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 },
-                zrl.Vector3{ .x = 5.0, .y = 0.0, .z = 5.0 },
-                zrl.Vector3{ .x = 0.0, .y = 1.0, .z = 0.0 },
+                c.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 },
+                c.Vector3{ .x = 5.0, .y = 0.0, .z = 5.0 },
+                c.Vector3{ .x = 0.0, .y = 1.0, .z = 0.0 },
                 70.0,
-                zrl.CameraProjection.CAMERA_PERSPECTIVE,
+                c.CAMERA_PERSPECTIVE,
             ),
         };
     }
@@ -33,15 +35,15 @@ pub const GameManager = struct {
             }
         }
 
-        zrl.InitWindow(width, height, title);
-        defer zrl.CloseWindow();
+        c.InitWindow(width, height, title);
+        defer c.CloseWindow();
 
-        zrl.SetTargetFPS(fps_target);
+        c.SetTargetFPS(fps_target);
 
         const manager = try GameManager.create(allocator);
         defer manager.kill(allocator);
 
-        while (!zrl.WindowShouldClose()) {
+        while (!c.WindowShouldClose()) {
             manager.drawWindow();
         }
     }
@@ -49,12 +51,12 @@ pub const GameManager = struct {
     fn drawWindow(self: @This()) void {
         self.main_camera.update();
 
-        zrl.BeginDrawing();
-        defer zrl.EndDrawing();
+        c.BeginDrawing();
+        defer c.EndDrawing();
 
-        zrl.ClearBackground(zrl.BLACK);
+        c.ClearBackground(c.BLACK);
 
-        zrl.DrawFPS(10, 10);
+        c.DrawFPS(10, 10);
 
         (&self.main_camera).drawFromCamera();
     }
