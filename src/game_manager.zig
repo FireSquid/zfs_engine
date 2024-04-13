@@ -1,9 +1,7 @@
 const std = @import("std");
 const cam = @import("camera.zig");
 
-const c = struct {
-    usingnamespace @import("c_headers.zig");
-};
+const c = @import("c_headers.zig");
 
 pub const GameManager = struct {
     main_camera: cam.Camera,
@@ -21,7 +19,7 @@ pub const GameManager = struct {
         };
     }
 
-    fn kill(self: @This(), alloc: std.mem.Allocator) void {
+    fn destroy(self: @This(), alloc: std.mem.Allocator) void {
         self.main_camera.kill(alloc);
     }
 
@@ -41,7 +39,7 @@ pub const GameManager = struct {
         c.SetTargetFPS(fps_target);
 
         const manager = try GameManager.create(allocator);
-        defer manager.kill(allocator);
+        defer manager.destroy(allocator);
 
         while (!c.WindowShouldClose()) {
             manager.drawWindow();

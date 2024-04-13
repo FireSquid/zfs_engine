@@ -1,13 +1,13 @@
 const std = @import("std");
-const Object = @import("object.zig").Object;
+const DebugObj = @import("debug_object.zig").DebugObject;
+const ModelObj = @import("simple_model.zig").SimpleModel;
 
-const c = struct {
-    usingnamespace @import("c_headers.zig");
-};
+const c = @import("c_headers.zig");
 
 pub const Camera = struct {
     rl_cam: *c.Camera3D,
-    test_cube: Object,
+    debugObj: DebugObj,
+    modelObj: ModelObj,
 
     pub fn create(alloc: std.mem.Allocator, pos: c.Vector3, tgt: c.Vector3, up: c.Vector3, v_fov: f32, proj: c_int) !@This() {
         const new_rl_cam = try alloc.create(c.Camera3D);
@@ -21,26 +21,28 @@ pub const Camera = struct {
 
         return @This(){
             .rl_cam = new_rl_cam,
-            .test_cube = Object.init(
+            .debugObj = DebugObj.init(
                 c.Vector3{ .x = 5.0, .y = 0.0, .z = 5.0 },
-                c.Vector3{ .x = 1.0, .y = 1.0, .z = 1.0 },
+                0.1,
             ),
+            .modelObj = ModelObj.create(.{ .x = 5.0, .y = 0.0, .z = 5.0 }, .{ .x = 1.0, .y = 1.0, .z = 1.0 }, "../../resources/turret_test.obj"),
         };
     }
 
     pub fn kill(self: @This(), alloc: std.mem.Allocator) void {
         alloc.destroy(self.rl_cam);
+        self.modelObj.destroy();
     }
 
     pub fn update(self: @This()) void {
-        //c.UpdateCamera(self.rl_cam, c.CameraMode.CAMERA_FREE);
-        self.rl_cam.*.target.x -= 0.01;
+        _ = self;
     }
 
     pub fn drawFromCamera(self: @This()) void {
         c.BeginMode3D(self.rl_cam.*);
         defer c.EndMode3D();
 
-        self.test_cube.drawObject();
+        self.debugObj.draw();
+        self.modelObj.draw();
     }
 };
