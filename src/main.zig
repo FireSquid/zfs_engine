@@ -1,7 +1,5 @@
 const std = @import("std");
-const gm = @import("game_manager.zig");
-
-const print = std.debug.print;
+const Game = @import("game.zig").Game;
 
 const window_title = "3d Visual Test";
 const screen_width = 1920;
@@ -13,5 +11,5 @@ pub fn main() !void {
 
     std.debug.assert(c.ChangeDirectory(c.GetApplicationDirectory()));
 
-    try gm.GameManager.startGameWindowLoop(window_title, screen_width, screen_height, target_fps);
+    try Game.startGameWindowLoop(window_title, screen_width, screen_height, target_fps);
 }
