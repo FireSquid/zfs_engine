@@ -4,10 +4,12 @@ const cam = @import("camera.zig");
 const c = @import("c_headers.zig");
 
 pub const GameManager = struct {
+    const Self = @This();
+
     main_camera: cam.Camera,
 
-    fn create(alloc: std.mem.Allocator) !@This() {
-        return @This(){
+    fn create(alloc: *std.mem.Allocator) !Self {
+        return Self{
             .main_camera = try cam.Camera.create(
                 alloc,
                 c.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 },
@@ -19,13 +21,13 @@ pub const GameManager = struct {
         };
     }
 
-    fn destroy(self: @This(), alloc: std.mem.Allocator) void {
-        self.main_camera.kill(alloc);
+    fn destroy(self: Self) void {
+        self.main_camera.destroy();
     }
 
     pub fn startGameWindowLoop(title: [*c]const u8, width: i32, height: i32, fps_target: i32) !void {
         var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-        const allocator = gpa.allocator();
+        var allocator = gpa.allocator();
         defer {
             switch (gpa.deinit()) {
                 .leak => @panic("=========== Detected Memory Leak ============"),
@@ -38,17 +40,15 @@ pub const GameManager = struct {
 
         c.SetTargetFPS(fps_target);
 
-        const manager = try GameManager.create(allocator);
-        defer manager.destroy(allocator);
+        const manager = try GameManager.create(&allocator);
+        defer manager.destroy();
 
         while (!c.WindowShouldClose()) {
             manager.drawWindow();
         }
     }
 
-    fn drawWindow(self: @This()) void {
-        self.main_camera.update();
-
+    fn drawWindow(self: Self) void {
         c.BeginDrawing();
         defer c.EndDrawing();
 
