@@ -8,6 +8,7 @@ const Vec3 = @import("vec3.zig").Vec3;
 
 const Drawable = @import("objects/drawable/drawable.zig").Drawable;
 const DebugSphere = @import("objects/drawable/debug_sphere.zig").DebugSphere;
+const StaticModel = @import("objects/drawable/static_model.zig").StaticModel;
 
 const DrawList = std.ArrayList(Drawable);
 
@@ -16,7 +17,6 @@ pub const Camera = struct {
 
     rl_cam: *c.Camera3D,
     debug_obj: DebugObj,
-    model_obj: ModelObj,
     allocator: std.mem.Allocator,
 
     draw_list: DrawList,
@@ -36,6 +36,9 @@ pub const Camera = struct {
         inline for (0..10) |num| {
             try draw_objs.append(DebugSphere.init(Vec3.new(5, 1, num), 0.2).drawable());
         }
+        inline for (0..4) |num| {
+            try draw_objs.append(StaticModel.init(Vec3.new(num * 2, -2, 5), Vec3.one(), "turret_test").drawable());
+        }
 
         return Self{
             .rl_cam = new_rl_cam,
@@ -43,7 +46,6 @@ pub const Camera = struct {
                 Vec3.new(5, 0, 5),
                 0.1,
             ),
-            .model_obj = ModelObj.create(Vec3.new(5, 0, 5), Vec3.one(), "../../resources/turret_test.obj"),
             .allocator = alloc,
             .draw_list = draw_objs,
         };
@@ -51,7 +53,6 @@ pub const Camera = struct {
 
     pub fn destroy(self: Self) void {
         self.allocator.destroy(self.rl_cam);
-        self.model_obj.destroy();
         self.draw_list.deinit();
     }
 
@@ -60,7 +61,6 @@ pub const Camera = struct {
         defer c.EndMode3D();
 
         self.debug_obj.draw();
-        self.model_obj.draw();
 
         for (self.draw_list.items) |drawable| {
             drawable.draw();

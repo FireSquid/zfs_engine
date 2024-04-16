@@ -5,6 +5,8 @@ const c = @import("c_headers.zig");
 
 const Vec3 = @import("vec3.zig").Vec3;
 
+const model = @import("models/models.zig");
+
 pub const Game = struct {
     const Self = @This();
 
@@ -37,16 +39,22 @@ pub const Game = struct {
             }
         }
 
+        // -- Initialize raylib
         c.InitWindow(width, height, title);
         defer c.CloseWindow();
-
         c.SetTargetFPS(fps_target);
 
-        const manager = try Game.create(allocator);
-        defer manager.destroy();
+        // -- Load in models
+        model.loadModels(allocator) catch {
+            std.debug.panic("Model loading failed.\n", .{});
+        };
+        defer model.unloadModels();
+
+        const game = try Game.create(allocator);
+        defer game.destroy();
 
         while (!c.WindowShouldClose()) {
-            manager.drawWindow();
+            game.drawWindow();
         }
     }
 

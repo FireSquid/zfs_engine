@@ -1,13 +1,25 @@
 const std = @import("std");
 
 const DebugSphere = @import("debug_sphere.zig").DebugSphere;
+const StaticModel = @import("static_model.zig").StaticModel;
 
 pub const Drawable = union(enum) {
-    debugSphere: DebugSphere,
+    const Self = @This();
 
-    pub inline fn draw(self: @This()) void {
+    debugSphere: DebugSphere,
+    staticModel: StaticModel,
+
+    pub fn draw(self: Self) void {
         switch (self) {
-            Drawable.debugSphere => |ds| ds.draw(),
+            Self.debugSphere => |ds| ds.draw(),
+            Self.staticModel => |sm| sm.draw(),
+        }
+    }
+
+    pub fn destroy(self: Self) void {
+        switch (self) {
+            Self.debugSphere => {},
+            Self.staticModel => {},
         }
     }
 };
