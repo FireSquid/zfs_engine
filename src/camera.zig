@@ -1,6 +1,4 @@
 const std = @import("std");
-const DebugObj = @import("debug_object.zig").DebugObject;
-const ModelObj = @import("simple_model.zig").SimpleModel;
 
 const c = @import("c_headers.zig");
 
@@ -16,7 +14,6 @@ pub const Camera = struct {
     const Self = @This();
 
     rl_cam: *c.Camera3D,
-    debug_obj: DebugObj,
     allocator: std.mem.Allocator,
 
     draw_list: DrawList,
@@ -42,10 +39,6 @@ pub const Camera = struct {
 
         return Self{
             .rl_cam = new_rl_cam,
-            .debug_obj = DebugObj.init(
-                Vec3.new(5, 0, 5),
-                0.1,
-            ),
             .allocator = alloc,
             .draw_list = draw_objs,
         };
@@ -59,8 +52,6 @@ pub const Camera = struct {
     pub fn drawFromCamera(self: Self) void {
         c.BeginMode3D(self.rl_cam.*);
         defer c.EndMode3D();
-
-        self.debug_obj.draw();
 
         for (self.draw_list.items) |drawable| {
             drawable.draw();
