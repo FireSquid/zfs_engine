@@ -25,7 +25,15 @@ pub const StaticModel = struct {
         c.DrawModel(self.model, self.position, self.scale.x, c.WHITE);
     }
 
+    pub fn draw_pos(self: Self) void {
+        c.DrawText(c.TextFormat("%.1f | %.1f", self.position.x, self.position.z), 10, 100, 20, c.LIME);
+    }
+
     pub fn drawable(self: Self) Drawable {
         return Drawable{ .staticModel = self };
+    }
+
+    pub fn set_pos(self: *Self, new_pos: c.Vector3) void {
+        self.position = new_pos;
     }
 };

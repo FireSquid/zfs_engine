@@ -12,4 +12,8 @@ pub const Vec3 = struct {
     pub fn one() c.Vector3 {
         return Vec3.new(1, 1, 1);
     }
+
+    pub fn str(vec: c.Vector3) []const u8 {
+        return @import("std").fmt.comptimePrint("VEC({d:.1},{d:.1},{d:.1})", .{ vec.x, vec.y, vec.z });
+    }
 };

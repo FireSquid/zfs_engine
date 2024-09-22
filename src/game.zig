@@ -16,8 +16,8 @@ pub const Game = struct {
         return Self{
             .main_camera = try cam.Camera.create(
                 alloc,
-                Vec3.new(0, 5, 0),
-                Vec3.new(5, 0, 5),
+                Vec3.new(10, 10, -6),
+                Vec3.new(10, 0, 6),
                 Vec3.new(0, 1, 0),
                 70.0,
                 c.CAMERA_PERSPECTIVE,
@@ -50,7 +50,7 @@ pub const Game = struct {
         };
         defer model.unloadModels();
 
-        const game = try Game.create(allocator);
+        var game = try Game.create(allocator);
         defer game.destroy();
 
         while (!c.WindowShouldClose()) {
@@ -58,7 +58,7 @@ pub const Game = struct {
         }
     }
 
-    fn drawWindow(self: Self) void {
+    fn drawWindow(self: *Self) void {
         c.BeginDrawing();
         defer c.EndDrawing();
 
@@ -66,6 +66,8 @@ pub const Game = struct {
 
         c.DrawFPS(10, 10);
 
-        (&self.main_camera).drawFromCamera();
+        const mouse_pos = c.GetMousePosition();
+
+        (&self.main_camera).drawFromCamera(mouse_pos);
     }
 };

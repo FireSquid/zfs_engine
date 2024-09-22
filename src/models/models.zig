@@ -8,10 +8,21 @@ pub var models: ModelMap = undefined;
 
 const resourcePath = "../../resources/";
 
+const modelNames = .{
+    "turret_test",
+    "object_base",
+    "planet_blank",
+    "ship_blank",
+};
+
 pub fn loadModels(alloc: std.mem.Allocator) !void {
     models = ModelMap.init(alloc);
 
-    try addModelLoad("turret_test");
+    inline for (modelNames) |modelName| {
+        addModelLoad(modelName) catch {
+            std.debug.print("Failed to load model: {s}", .{modelName});
+        };
+    }
 }
 
 pub fn unloadModels() void {
