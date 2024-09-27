@@ -7,6 +7,9 @@ const Vec3 = @import("vec3.zig");
 
 const model = @import("models/models.zig");
 const ObjectList = @import("objects/object_list.zig").ObjectList;
+const mouse = @import("input/mouse.zig");
+
+pub var main_camera: ?*cam.Camera = null;
 
 pub const Game = struct {
     const Self = @This();
@@ -59,7 +62,9 @@ pub const Game = struct {
         var game = try Game.create(allocator);
         defer game.destroy();
 
-        game.base_handle = try game.obj_list.addModel(Vec3.new(9, 0, 9), Vec3.one(), "object_base");
+        main_camera = &game.main_camera;
+
+        game.base_handle = try game.obj_list.addModel(Vec3.new(9, 0, 9), Vec3.one(), "planet_blank");
 
         while (!c.WindowShouldClose()) {
             game.gameLogic();
@@ -75,17 +80,15 @@ pub const Game = struct {
 
         c.DrawFPS(10, 10);
 
-        self.main_camera.drawFromCamera(self.obj_list);
+        self.main_camera.drawFromCamera(&self.obj_list);
     }
 
     fn gameLogic(self: *Self) void {
-        const mouseRay = c.GetMouseRay(c.GetMousePosition(), self.main_camera.rl_cam.*);
-        const rayScale = -(mouseRay.position.y / mouseRay.direction.y);
-        const floorPos = c.Vector3{
-            .x = mouseRay.position.x + mouseRay.direction.x * rayScale,
-            .y = 0,
-            .z = mouseRay.position.z + mouseRay.direction.z * rayScale,
-        };
-        self.obj_list.modelList.items[self.base_handle.?].set_pos(floorPos);
+        const ray_col: c.RayCollision = c.GetRayCollisionSphere(c.GetMouseRay(c.GetMousePosition(), main_camera.?.rl_cam.*), Vec3.new(9, 2, 9), 1);
+        if (ray_col.hit) {
+            self.obj_list.modelList.items[self.base_handle.?].set_pos(Vec3.new(9, 2, 9));
+        } else {
+            self.obj_list.modelList.items[self.base_handle.?].set_pos(Vec3.new(9, 0, 9));
+        }
     }
 };

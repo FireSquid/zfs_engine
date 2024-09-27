@@ -39,7 +39,7 @@ pub const Camera = struct {
         self.allocator.destroy(self.rl_cam);
     }
 
-    pub fn drawFromCamera(self: *Self, obj_list: ObjectList) void {
+    pub fn drawFromCamera(self: *Self, obj_list: *const ObjectList) void {
         {
             c.BeginMode3D(self.rl_cam.*);
             defer c.EndMode3D();
